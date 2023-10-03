@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
-import { asText } from "@prismicio/client";
 import { SliceZone } from "@prismicio/react";
+import { notFound } from "next/navigation";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
@@ -13,24 +12,10 @@ import { components } from "@/slices";
  * @param {{ params: Params }}
  * @returns {Promise<import("next").Metadata>}
  */
-export async function generateMetadata({ params }) {
-  const client = createClient();
-  const page = await client
-    .getByUID("page", params.uid)
-    .catch(() => notFound());
-  const settings = await client.getSingle("settings");
-
+export async function generateMetadata() {
   return {
-    title: `${asText(page.data.title)} | ${asText(settings.data.siteTitle)}`,
-    description: page.data.meta_description,
-    openGraph: {
-      title: page.data.meta_title,
-      images: [
-        {
-          url: page.data.meta_image.url,
-        },
-      ],
-    },
+    title: "DPDK Slicemachine demo",
+    description: "Demo page for Prismic's slicemachine hosted by DPDK",
   };
 }
 

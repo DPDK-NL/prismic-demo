@@ -1,0 +1,32 @@
+# When the workflow succeeds the package will be published to docker registry
+env:
+  HASHID: ${{ github.run_id }}
+  IMAGE_NAME: ${{ github.event.repository.name }}
+  REGISTRY: registry.digitalocean.com/dpdk-docker-images
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install doctl 
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Build container
+        run: docker build -t ${REGISTRY}/${IMAGE_NAME}:${VERSION}.${HASHID} .
+      - name: Log in to DO Container Registry 
+        run: doctl registry login --expiry-seconds 600
+      - name: Remove all old images
+        run: if [ ! -z "$(doctl registry repository list | grep "${IMAGE_NAME}")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+      - name: Build and push to do
+        run: docker push ${REGISTRY}/${IMAGE_NAME}:${VERSION}.${HASHID}
+
+name: Publish Docker Image
+
+on:
+  push:
+    tags:
+      - '*'
