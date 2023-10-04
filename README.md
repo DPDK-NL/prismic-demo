@@ -10,7 +10,7 @@ Want to see an example of a multi-page website using [Prismic][prismic] and [Nex
 <img src="https://user-images.githubusercontent.com/8601064/166617932-eaaa1643-f086-4909-9868-56234f8da98d.png" alt="Screenshots of the site seen on deskop and mobile browsers" />
 
 &nbsp;
-
+ 
 ## 🚀 Quick Start
 
 To start a new project using this starter, run the following commands in your terminal:
